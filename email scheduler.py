@@ -17,19 +17,19 @@ app.config.update(
     MAIL_SERVER = 'smtp.gmail.com',
     MAIL_PORT = '465',
     MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'moominchen0@gmail.com',
-    MAIL_PASSWORD=  'ojvusbpexcavavpd',
-    MAIL_DEFAULT_SENDER= 'moominchen0@gmail.com'
+    MAIL_USERNAME = '',
+    MAIL_PASSWORD=  '',
+    MAIL_DEFAULT_SENDER= ''
 )
 mail = Mail(app)
-email_sender='moominchen0@gmail.com'
-email_password='ojvusbpexcavavpd'
+email_sender=''
+email_password=''
 def db_init():
     with app.app_context():
       db = pymysql.connect(
-        host = 'ec2-34-208-156-155.us-west-2.compute.amazonaws.com',
-        user = 'erp',
-        password = 'erp',
+        host = '',
+        user = '',
+        password = '',
         database='metaage_sales',
         port = 3306
     )
