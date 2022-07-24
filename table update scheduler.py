@@ -13,9 +13,9 @@ app = Flask(__name__)
 def db_init():
     with app.app_context():
       db = pymysql.connect(
-        host = 'ec2-34-208-156-155.us-west-2.compute.amazonaws.com',
-        user = 'erp',
-        password = 'erp',
+        host = '',
+        user = '',
+        password = '',
         database='metaage_sales',
         port = 3306
     )
