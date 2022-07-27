@@ -48,20 +48,23 @@ def send_async_email(app, msg):
         mail.send(msg)
  
 def send_mail():
-    with app.app_context():
-      db,cursor=db_init()
-      cursor.execute('SELECT `me_boss`.`PO_Number`,`me_IT`.`Email`,TIMESTAMPDIFF(DAY, now(),`Renewal_Date`) AS daytype FROM `metaage_sales`.`me_boss`,`me_IT`HAVING daytype<=30 AND daytype>0;')
-      context = ssl.create_default_context()
-      with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        detail = cursor.fetchall()
-        db.commit()
-        for i in detail:
-           msg = Message(subject='ERP',body='Hello ' + str(i['PO_Number'])+ 'Thanks For using our services.',recipients=[str(i['Email'])])
-           Thread(target=mail.send(msg)).start() 
-      cursor.close()
-      db.close()    
-      print('job_cron1 executed') 
+    try:
+        with app.app_context():
+            db,cursor=db_init()
+            cursor.execute('SELECT`me_IT`.`Email`,`me_IT`.`PO_Number`,`sales`.`Purchase_Order_Number`,TIMESTAMPDIFF(DAY, now(),`sales`.`Renewal_Date`) AS daytype FROM `sales` INNER JOIN `me_IT` ON `me_IT`.`PO_Number`=`sales`.`PO_Number`HAVING daytype<=30 AND daytype>0;')
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+                smtp.login(email_sender, email_password)
+                detail = cursor.fetchall()
+                db.commit()
+                for i in detail:
+                    msg = Message(subject='ERP',body='Hello ' + str(i['PO_Number'])+'Your purchase order number is '+str(i['Purchase_Order_Number'])+' Thanks For using our services.',recipients=[str(i['Email'])])
+                    Thread(target=mail.send(msg)).start() 
+            cursor.close()
+            db.close()    
+            print('job_cron1 executed') 
+    except Exception as e:
+        return {"message":str(e)}
 
 if __name__ == "__main__":
     scheduler.add_job(func=send_mail,id='job_cron1', trigger='cron', day='*', hour=11 ,minute=3)
